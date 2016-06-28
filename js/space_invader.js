@@ -104,11 +104,5 @@ var space_invader = new SpaceInvader();
 space_invader.initialize(container);
 space_invader.start();
 
-// function randomize() {
-// function randomize() {
+
 	// space_invader.stop();
-	// space_invader.stars = Math.random() * 1000 + 50;
-	// space_invader.minVelocity = Math.random() * 30 + 5;
-	// space_invader.maxVelocity = Math.random() * 50 + space_invader.minVelocity;
-	// space_invader.start();
-// }
