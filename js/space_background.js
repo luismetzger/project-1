@@ -43,12 +43,12 @@ SpaceInvader.prototype = {
 
       var self = this;
       //Now let's start the timer
-      // self.update();
-      // self.draw();
-      this.intervalId = setInterval(function() {
-        self.update();
-        self.draw();
-      }, 1000 / this.fps);
+      self.update();
+      self.draw();
+    //   this.intervalId = setInterval(function() {
+    //     self.update();
+    //     self.draw();
+    //   }, 1000 / this.fps);
 
       // this.intervalId = setTimeout(function() {
       //   self.update();
