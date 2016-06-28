@@ -18,7 +18,7 @@ SpaceInvader.prototype = {
     self.width = window.innerWidth;
     self.height = window.innerHeight;
 
-    window.addEventListener('resize', function resize(event) {
+    window.addEventListener('resize', function(event) {
       self.width = window.innerWidth;
       self.height = window.innerHeight;
       self.canvas.width = self.width;
@@ -37,31 +37,39 @@ SpaceInvader.prototype = {
     //Lets create some stars
     var stars = [];
     for(var i=0; i < this.stars;i++) {
-      stars[i] = new Star(Math.random()*this.width, Math.random()*this.height, Math.random()*3+1,
-		 (Math.random()*(this.maxVelocity - this.minVelocity))+this.minVelocity);
+      stars[i] = new Star(Math.random()*this.width, Math.random() * this.height, Math.random() * 3 + 1, (Math.random()*(this.maxVelocity - this.minVelocity)) + this.minVelocity);
     }
       this.stars = stars;
 
       var self = this;
       //Now let's start the timer
+      // self.update();
+      // self.draw();
       this.intervalId = setInterval(function() {
-    		self.update();
-    		self.draw();
-    	}, 1000 / this.fps);
+        self.update();
+        self.draw();
+      }, 1000 / this.fps);
+
+      // this.intervalId = setTimeout(function() {
+      //   self.update();
+      //   self.draw();
+      // }, 1000 / this.fps);
   },
   stop: function() {
     clearInterval(this.intervalId);
   },
   update: function() {
     var passed_time = 1 / this.fps;
+
     for(var i=0; i < this.stars.length;i++) {
         var star = this.stars[i];
         star.y += passed_time * star.velocity;
+
         if(star.y > this.height) {
-          this.stars[i] = new Star(Math.random()*this.width, 0, Math.random()*3+1,
-		 	(Math.random()*(this.maxVelocity - this.minVelocity))+this.minVelocity);
+          this.stars[i] = new Star(Math.random() * this.width, 0, Math.random() * 3 + 1, (Math.random()*(this.maxVelocity - this.minVelocity)) + this.minVelocity);
         }
     }
+    console.log('Update Function Working');
   },
   draw: function() {
       // Declare drawing context
@@ -78,15 +86,16 @@ SpaceInvader.prototype = {
         var star = this.stars[i];
         ctx.fillRect(star.x, star.y, star.size, star.size);
       }
+      console.log('Draw Function Working');
     }
   }
 
-function Star(x, y, size, velocity) {
-    this.x = x;
-    this.y = y;
-    this.size = size;
-    this.velocity = velocity;
-}
+  function Star(x, y, size, velocity) {
+      this.x = x;
+      this.y = y;
+      this.size = size;
+      this.velocity = velocity;
+  }
 
 
 //Let's make the background animated!
@@ -95,10 +104,11 @@ var space_invader = new SpaceInvader();
 space_invader.initialize(container);
 space_invader.start();
 
-// function randomise() {
-// 	starfield.stop();
-// 	starfield.stars = Math.random()*1000 + 50;
-// 	starfield.minVelocity = Math.random()*30+5;
-// 	starfield.maxVelocity = Math.random()*50 + starfield.minVelocity;
-// 	starfield.start();
+// function randomize() {
+// function randomize() {
+	// space_invader.stop();
+	// space_invader.stars = Math.random() * 1000 + 50;
+	// space_invader.minVelocity = Math.random() * 30 + 5;
+	// space_invader.maxVelocity = Math.random() * 50 + space_invader.minVelocity;
+	// space_invader.start();
 // }
