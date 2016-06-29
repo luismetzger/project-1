@@ -5,3 +5,7 @@ div#bg-container {
   left: 0px;
   top: 0px;
 }
+
+canvas {
+	background: black;
+}
