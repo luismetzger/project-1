@@ -36,7 +36,7 @@ Game.prototype = {
             left: gameCanvas.width / 2 - this.config.gameWidth / 2,
             right: gameCanvas.width / 2 + this.config.gameWidth / 2,
             top: gameCanvas.height / 2 + this.config.gameHeigth / 2,
-            bottom: gameCanvas.height / 2 + this.config.gameHeigth / 2
+            bottom: gameCanvas.height / 2 + this.config.gameHeight / 2
         };
     },
     currentState: function() {
@@ -44,23 +44,18 @@ Game.prototype = {
     },
     moveToState: function(state) {
         // Are we already in a state?
-        if(this.currentState()) {
-
-            //Before we moveStates check to see if we have a leave function. If it does call it.
-            if(this.currentState().leave) {
-                this.currentState().leave(game);
-            } else {
-                this.stateStack.pop();
-            }
-        } else if(state.enter) {
-            // If there is an ENTER function for the new state, call it.
-            state.enter(game);
+        if(this.currentState() && this.currentState().leave) {
+          this.currentState().leave(game);
+          this.stateStack.pop();
+        } else if (state.enter) {
+          state.enter(game);
         }
 
         // Set the current state
+        this.stateStack.pop();
         this.stateStack.push(state);
     },
-    pushState: function() {
+    pushState: function(state) {
          // If there is a new ENTER function for the new state call this function.
          if(state.enter) {
              state.enter(game);
@@ -150,23 +145,25 @@ WelcomeState.prototype = {
         ctx.font = '20px Sans-serif';
         ctx.fillText("Press 'Space Bar' to start.", game.width / 2, game.height / 2);
 
-        var canvas = document.getElementById('gameCanvas');
-
-        var ctx = game.gameCanvas.getContext('2d');
-        var width = game.gameCanvas.width;
-        var height = game.gameCanvas.height;
-        var rectSize = width/height;
-
-        for(var i=0;i<(width/rectSize);i++) {
-            for(var j=0;j<(height/rectSize);j++) {
-                ctx.fillStyle = 'rgb('
-                +Math.floor(255-rectSize*i)
-                +','
-                +Math.floor(255-rectSize*j)
-                +',0)';
-                ctx.fillRect(rectSize*i,rectSize*j,rectSize,rectSize);
-            }
-        }
+        // var canvas = document.getElementById('gameCanvas');
+        // var title  = ctx.fillText('Space Invaders', game.width / 2, game.height / 2 - 40);
+        // var title_color = ctx.fillStyle = '#ffffff';
+        //
+        // var ctx = game.gameCanvas.getContext('2d');
+        // var width = game.gameCanvas.width;
+        // var height = game.gameCanvas.height;
+        // var rectSize = width/height;
+        //
+        // for(var i=0;i<(rectSize/title_color);i++) {
+        //     for(var j=0;j<(height/rectSize);j++) {
+        //         ctx.fillStyle = 'rgb('
+        //         +Math.floor(255-rectSize*i)
+        //         +','
+        //         +Math.floor(255-rectSize*j)
+        //         +',0)';
+        //         ctx.fillRect(rectSize*i,rectSize*j,rectSize,rectSize);
+        //     }
+        // }
 
 
         // console.log(ctx);
@@ -183,6 +180,40 @@ WelcomeState.prototype = {
     }
 }
 
+// Game Intro State
+function IntroState(state) {
+  this.level = level;
+  this.countdownMessage = '3';
+}
+IntroState.prototype = {
+  draw: function() {
+    // Let's clear the background
+    ctx.clearRect(0, 0, game.width, game.height);
+
+    ctx.font = '36px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillText('Level' + this.level, game.width / 2, game.height / 2 + 36);
+    ctx.fillText('Ready in' + this.countdownMessage, game.width / 2, game.height / 2 + 36);
+  },
+  update: function(game, time) {
+      if(this.countdown === undefined) {
+        this.countdown = 3; // countdown from 3 seconds
+      }
+      this.countdown -= time;
+
+      if(this.countdown < 2) {
+        this.countdownMessage = "2";
+      } else if (this.countdown < 1) {
+        this.countdownMessage = "1";
+      } else if (this.countdow < 0) {
+        // Move to Play State - moveToState
+      
+      }
+  }
+}
+
 // Setup the canvas
 var canvas = document.getElementById('gameCanvas');
 canvas.width = 800;
@@ -194,6 +225,8 @@ var game = new Game();
 var welcome = new WelcomeState();
 // Let's start the game
 game.initialize(canvas);
+
+// Start the game
 game.start();
 // welcome.introMusic();
 
@@ -207,13 +240,15 @@ game.start();
 window.addEventListener('keydown', function keydown(e) {
     var keycode = e.which || window.event.keycode;
 
-    if(keyCode == 32) {
+    if(keycode == 37 || keycode == 39 || keycode == 32) {
         e.preventDefault();
     }
-    game.keyDown(keyCode);
+    game.keyDown(keycode);
+    console.log(e);
 });
-window.addEventListener('keyup', function(e) {
-    var keyCode = e.which || window.event.keyCode;
+window.addEventListener('keyup', function keydown(e) {
+    var keycode = e.which || window.event.keyCode;
 
-    game.keyUp(keyCode);
+    game.keyUp(keycode);
+    console.log(e);
 });
