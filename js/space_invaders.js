@@ -120,6 +120,7 @@ function GameLoop(game) {
         // Get the drawing context from canvas
         var ctx = game.gameCanvas.getContext('2d');
 
+
         // Update if we have an update function. Also draw if we have a draw function
         if(currentState.update) {
             currentState.update(game, time);
@@ -138,14 +139,37 @@ WelcomeState.prototype = {
         // Clear the background of game
         ctx.clearRect(0, 0, game.width, game.height);
 
-        ctx.font = '60px Sans-serif';
+        ctx.font = '60px Bungee Shade';
         ctx.fillStyle = '#ffffff';
         ctx.textBaseline = 'center';
         ctx.textAlign = 'center';
         ctx.fillText('Space Invaders', game.width / 2, game.height / 2 - 40);
-        ctx.font = '20px Sans-serif';
 
+
+        // Using jQuery to make the Game Title Flash
+        ctx.font = '20px Sans-serif';
         ctx.fillText("Press 'Space Bar' to start.", game.width / 2, game.height / 2);
+
+        var canvas = document.getElementById('gameCanvas');
+
+        var ctx = game.gameCanvas.getContext('2d');
+        var width = game.gameCanvas.width;
+        var height = game.gameCanvas.height;
+        var rectSize = width/height;
+
+        for(var i=0;i<(width/rectSize);i++) {
+            for(var j=0;j<(height/rectSize);j++) {
+                ctx.fillStyle = 'rgb('
+                +Math.floor(255-rectSize*i)
+                +','
+                +Math.floor(255-rectSize*j)
+                +',0)';
+                ctx.fillRect(rectSize*i,rectSize*j,rectSize,rectSize);
+            }
+        }
+
+
+        // console.log(ctx);
     },
     keyDown: function(game, keyCode) {
         if(keyCode == 32) /*space*/ {
@@ -171,7 +195,12 @@ var welcome = new WelcomeState();
 // Let's start the game
 game.initialize(canvas);
 game.start();
-welcome.introMusic();
+// welcome.introMusic();
+
+
+
+
+
 
 
 // Event Listeners for the keyboard

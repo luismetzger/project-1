@@ -69,12 +69,12 @@ SpaceInvader.prototype = {
           this.stars[i] = new Star(Math.random() * this.width, 0, Math.random() * 3 + 1, (Math.random()*(this.maxVelocity - this.minVelocity)) + this.minVelocity);
         }
     }
-    console.log('Update Function Working');
+    // console.log('Update Function Working');
   },
   draw: function() {
       // Declare drawing context
       var ctx = this.canvas.getContext('2d');
-      console.log(ctx);
+    //   console.log(ctx);
 
       //Let's fill-in the background of canvas
       ctx.fillStyle = '#00000';
@@ -86,7 +86,7 @@ SpaceInvader.prototype = {
         var star = this.stars[i];
         ctx.fillRect(star.x, star.y, star.size, star.size);
       }
-      console.log('Draw Function Working');
+    //   console.log('Draw Function Working');
     }
   }
 
@@ -97,6 +97,14 @@ SpaceInvader.prototype = {
       this.velocity = velocity;
   }
 
+  function animate(){
+    requestAnimationFrame(animate)
+
+    // the drawing loop
+    drawBackground();
+    drawShip()
+    drawAliens()
+  }
 
 //Let's make the background animated!
 var container = document.getElementById('bg-container');
