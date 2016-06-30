@@ -256,7 +256,67 @@ function PlayState(config, level) {
   this.bombs = [];
 }
 
+PlayState.prototype = {
+  enter: function() {
+    //Create the Ship
+    this.ship = new Ship(game.width / 2, game.gameBound.bottom);
 
+    //  Setup initial state.
+    this.invaderCurrentVelocity =  10;
+    this.invaderCurrentDropDistance =  0;
+    this.invadersAreDropping =  false;
+
+    //Ship speed for this level and object properties for the invaders
+    var levelMultiplier = this.level * this.config.levelDifficultyMultiplier;
+    this.shipSpeed = this.config.shipSpeed;
+    this.invaderInitialVelocity = this.config.invaderInitialVelocity + (levelMultiplier * this.config.invaderInitialVelocity);
+    this.bombRate = this.config.bombRate + (levelMultiplier * this.config.bombRate);
+    this.bombMinVelocity = this.config.bombMinVelocity + (levelMultiplier * this.config.bombMinVelocity);
+    this.bombMaxVelocity = this.config.bombMaxVelocity + (levelMultiplier * this.config.bombMaxVelocity);
+
+    //Now lets create the invader Monsters
+    var ranks = this.config.invaderRanks;
+    var files = this.config.invaderFiles;
+    var invaders =[];
+      for(var rank = 0; rank < ranks; rank++) {
+        for(var file = 0; file < files; file++) {
+          invaders.push(new Invader(
+            (game.width / 2) + (files / 2 - file) * 200 / files),
+            (game.gameBound.top + rank * 20),
+            rank, file, 'Invader');
+        }
+      }
+      this.invaders = invaders;
+      this.invaderCurrentVelocity = this.invaderInitialVelocity;
+      this.invaderVelocity = {
+                                x: -this.invaderInitialVelocity,
+                                y:0
+                              };
+      this.invaderNextVelocity = null;
+  },
+  update: function() {
+    //If the left or right key arrows are pressed move the ship.
+    // Check this rather than keydown
+    // Event smooth movement, otherwise the ship will move all jankie
+    if(game.pressedKeys[37]) {
+      this.ship.x -= this.shipSpeed * time;
+    }
+    if(game.pressedKeys[39]) {
+      this.ship.x += this.shipSpeed * time;
+    }
+    if(game.pressedKeys[32]) {
+      //Fire Rocket
+    }
+
+    // Keep the ship within game bounds
+    if(this.ship.x < game.gameBound.left) {
+      this.ship.x = game.gameBound.left;
+    }
+    if(this.ship.x > game.gameBound.right) {
+      this.ship.x = game.gameBound.right;
+    }
+  }
+}
 
 
 // The Ship Position
@@ -282,7 +342,7 @@ function Bomb(x, y , velocity) {
 }
 
 // Invading Monsters Position
-function Invaders(x, y, rank, file, type) {
+function Invader(x, y, rank, file, type) {
   this.x = x;
   this.y = y;
   this.rank = rank;
