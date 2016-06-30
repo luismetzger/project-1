@@ -4,7 +4,16 @@ function Game() {
     this.config = {
         gameWidth: 400,
         gameHeigth: 300,
-        fps: 50
+        fps: 50,
+        levelDifficultyMultiplier: 0.2,
+        shipSpeed: 120,
+        invaderInitialVelocity: 25,
+        bombRate: 0.05,
+        bombMinVelocity: 50,
+        bombMaxVelocity: 50,
+        invaderRanks: 5,
+        invaderFiles: 10
+
     };
     this.lives = 3;
     this.width = 0;
@@ -204,10 +213,10 @@ IntroState.prototype = {
       this.countdown -= time;
 
       if(this.countdown < 2) {
-        this.countdownMessage = "2";
+        this.countdownMessage = '2';
       }
       if (this.countdown < 1) {
-        this.countdownMessage = "1";
+        this.countdownMessage = '1';
       }
       if (this.countdown <= 0) {
         // Move to Play State - moveToState
@@ -246,6 +255,44 @@ function PlayState(config, level) {
   this.rockets = [];
   this.bombs = [];
 }
+
+
+
+
+// The Ship Position
+function Ship(x, y) {
+  this.x = x;
+  this.y = y;
+  this.width = 20;
+  this.width = 16;
+}
+
+// Rocket Fire From Ship to Destroy Invader Monsters Positions
+function Rocket(x, y, velocity) {
+  this.x = x;
+  this.y = y;
+  this.velocity = velocity;
+}
+
+// Invader Bombs being droped Position
+function Bomb(x, y , velocity) {
+  this.x = x;
+  this.y = y;
+  this.velocity = velocity;
+}
+
+// Invading Monsters Position
+function Invaders(x, y, rank, file, type) {
+  this.x = x;
+  this.y = y;
+  this.rank = rank;
+  this.file = file;
+  this.type = type;
+  this.width = 18;
+  this.height = 14;
+}
+
+
 
 // Setup the canvas
 var canvas = document.getElementById('gameCanvas');
