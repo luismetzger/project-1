@@ -47,7 +47,9 @@ Game.prototype = {
         if(this.currentState() && this.currentState().leave) {
           this.currentState().leave(game);
           this.stateStack.pop();
-        } else if (state.enter) {
+        }
+
+        if (state.enter) {
           state.enter(game);
         }
 
@@ -93,6 +95,7 @@ Game.prototype = {
        if(this.currentState() && this.currentState().keyDown) {
            this.currentState().keyDown(this, keyCode);
        }
+       console.log('keyDown is working');
     },
     // Let's the game know that the key is up
     keyUp: function(keyCode) {
@@ -101,6 +104,7 @@ Game.prototype = {
         if(this.currentState() && this.currentState().keyUp) {
             this.currentState().keyUp(this, keyCode);
         }
+        console.log('keyUp is working');
     }
 }
 
@@ -119,7 +123,9 @@ function GameLoop(game) {
         // Update if we have an update function. Also draw if we have a draw function
         if(currentState.update) {
             currentState.update(game, time);
-        } else if (currentState.draw) {
+        }
+
+        if (currentState.draw) {
             currentState.draw(game, time, ctx);
         }
 
@@ -141,7 +147,7 @@ WelcomeState.prototype = {
         ctx.fillText('Space Invaders', game.width / 2, game.height / 2 - 40);
 
 
-        // Using jQuery to make the Game Title Flash
+
         ctx.font = '20px Sans-serif';
         ctx.fillText("Press 'Space Bar' to start.", game.width / 2, game.height / 2);
 
@@ -171,6 +177,11 @@ WelcomeState.prototype = {
     keyDown: function(game, keyCode) {
         if(keyCode == 32) /*space*/ {
             // Spacebar starts the game.
+            game.level = 1;
+            game.score = 0;
+            game.lives = 3;
+            game.moveToState(new IntroState(game.level));
+            console.log('keyDown in WelcomeState is working');
         }
     },
     introMusic: function() {
@@ -181,22 +192,11 @@ WelcomeState.prototype = {
 }
 
 // Game Intro State
-function IntroState(state) {
+function IntroState(level) {
   this.level = level;
   this.countdownMessage = '3';
 }
 IntroState.prototype = {
-  draw: function() {
-    // Let's clear the background
-    ctx.clearRect(0, 0, game.width, game.height);
-
-    ctx.font = '36px Arial';
-    ctx.fillStyle = '#ffffff';
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center';
-    ctx.fillText('Level' + this.level, game.width / 2, game.height / 2 + 36);
-    ctx.fillText('Ready in' + this.countdownMessage, game.width / 2, game.height / 2 + 36);
-  },
   update: function(game, time) {
       if(this.countdown === undefined) {
         this.countdown = 3; // countdown from 3 seconds
@@ -205,13 +205,46 @@ IntroState.prototype = {
 
       if(this.countdown < 2) {
         this.countdownMessage = "2";
-      } else if (this.countdown < 1) {
-        this.countdownMessage = "1";
-      } else if (this.countdow < 0) {
-        // Move to Play State - moveToState
-      
       }
+      if (this.countdown < 1) {
+        this.countdownMessage = "1";
+      }
+      if (this.countdown <= 0) {
+        // Move to Play State - moveToState
+        game.moveToState(new PlayState(game.config, this.level));
+      }
+  },
+  draw: function(game, time, ctx) {
+    // Let's clear the background
+    ctx.clearRect(0, 0, game.width, game.height);
+
+    ctx.font = '50px Bungee Shade';
+    ctx.fillStyle = '#ffffff';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillText('Level' + this.level, game.width / 2, game.height / 3);
+
+    ctx.font = '30px Sans-serif';
+    ctx.fillText('Ready in ' + this.countdownMessage, game.width / 2, game.height / 2 + 36);
+    return;
   }
+}
+
+function PlayState(config, level) {
+  this.config = config;
+  this.level = level
+
+  //Game State
+  this.invaderCurrentVelocity = 10;
+  this.invaderCurrentDropDistance = 0;
+  this.invadersAreDropping = false;
+  this.lastRocketTime = null;
+
+  //Game entities
+  this.ship = null;
+  this.invaders = [];
+  this.rockets = [];
+  this.bombs = [];
 }
 
 // Setup the canvas
@@ -222,7 +255,7 @@ canvas.height = 600;
 
 // Define variable for game instance class
 var game = new Game();
-var welcome = new WelcomeState();
+// var welcome = new WelcomeState();
 // Let's start the game
 game.initialize(canvas);
 
@@ -235,20 +268,19 @@ game.start();
 
 
 
-
 // Event Listeners for the keyboard
 window.addEventListener('keydown', function keydown(e) {
     var keycode = e.which || window.event.keycode;
 
     if(keycode == 37 || keycode == 39 || keycode == 32) {
         e.preventDefault();
+        console.log('yay keydown');
     }
     game.keyDown(keycode);
-    console.log(e);
 });
 window.addEventListener('keyup', function keydown(e) {
     var keycode = e.which || window.event.keyCode;
 
     game.keyUp(keycode);
-    console.log(e);
+    console.log('yay keyup');
 });
