@@ -22,3 +22,6 @@ div#bg-container {
 canvas {
   background: black;
 }
+#gameCanvas {
+  /*z-index: 1;*/
+}

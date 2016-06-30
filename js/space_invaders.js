@@ -3,7 +3,7 @@ function Game() {
     // Initial configs on how fast monster invaders will move and size of window
     this.config = {
         gameWidth: 400,
-        gameHeigth: 300,
+        gameHeight: 300,
         fps: 50,
         levelDifficultyMultiplier: 0.2,
         shipSpeed: 120,
@@ -15,6 +15,7 @@ function Game() {
         invaderFiles: 10
 
     };
+    // All state starts
     this.lives = 3;
     this.width = 0;
     this.height = 0;
@@ -24,6 +25,9 @@ function Game() {
         right: 0,
         bottom: 0
     };
+    this.intervalId = 0;
+    this.score = 0;
+    this.level - 1;
     // Empty object array to hold all key state's being called
     this.stateStack = [];
 
@@ -44,7 +48,7 @@ Game.prototype = {
         this.gameBound = {
             left: gameCanvas.width / 2 - this.config.gameWidth / 2,
             right: gameCanvas.width / 2 + this.config.gameWidth / 2,
-            top: gameCanvas.height / 2 + this.config.gameHeigth / 2,
+            top: gameCanvas.height / 2 + this.config.gameHeight / 2,
             bottom: gameCanvas.height / 2 + this.config.gameHeight / 2
         };
     },
@@ -126,7 +130,7 @@ function GameLoop(game) {
         var time = 1 / game.config.fps;
 
         // Get the drawing context from canvas
-        var ctx = game.gameCanvas.getContext('2d');
+        var ctx = this.gameCanvas.getContext('2d');
 
 
         // Update if we have an update function. Also draw if we have a draw function
@@ -257,7 +261,7 @@ function PlayState(config, level) {
 }
 
 PlayState.prototype = {
-  enter: function() {
+  enter: function(game) {
     //Create the Ship
     this.ship = new Ship(game.width / 2, game.gameBound.bottom);
 
@@ -294,7 +298,7 @@ PlayState.prototype = {
                               };
       this.invaderNextVelocity = null;
   },
-  update: function() {
+  update: function(game, time) {
     //If the left or right key arrows are pressed move the ship.
     // Check this rather than keydown
     // Event smooth movement, otherwise the ship will move all jankie
@@ -315,6 +319,34 @@ PlayState.prototype = {
     if(this.ship.x > game.gameBound.right) {
       this.ship.x = game.gameBound.right;
     }
+  },
+  draw: function(game, time, ctx) {
+    // Clear Background once again
+    ctx.clearRect(0, 0, game.width, game.height);
+
+    //Draw the effin Ship
+    console.log(this.ship)
+    ctx.fillStyle = '#e67e22';
+    ctx.fillRect(this.ship.x - (this.ship.width / 2), this.ship.y - (this.ship.height / 2), this.ship.width, this.ship.height);
+
+    //  Draw invaders.
+    ctx.fillStyle = '#006600';
+    for(var i=0; i<this.invaders.length; i++) {
+        var invader = this.invaders[i];
+        ctx.fillRect(invader.x - invader.width/2, invader.y - invader.height/2, invader.width, invader.height);
+    }
+
+    //Draw info
+    var text_info = game.gameBound.bottom + (game.height - game.gameBound.bottom / 2) + 14 / 2;
+    ctx.font = '14px Arial';
+    ctx.fillStyle = '#ffffff';
+    var info = 'Lives: ' + game.lives;
+    ctx.textAlign = 'left';
+    ctx.fillText(info, game.gameBound.left, text_info);
+    info = 'Score: ' + game.score + ', Level: ' + game.level;
+    ctx.textAlign = 'right';
+    ctx.fillText(info, game.gameBound.right, text_info);
+    // console.log(ctx);
   }
 }
 
@@ -323,8 +355,8 @@ PlayState.prototype = {
 function Ship(x, y) {
   this.x = x;
   this.y = y;
-  this.width = 20;
-  this.width = 16;
+  this.height = 30;
+  this.width = 26;
 }
 
 // Rocket Fire From Ship to Destroy Invader Monsters Positions
