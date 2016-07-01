@@ -154,8 +154,6 @@ WelcomeState.prototype = {
         // Clear the background of game
         ctx.clearRect(0, 0, game.width, game.height);
 
-
-
           ctx.font = '60px Bungee Shade';
           ctx.fillStyle = '#ffffff';
           ctx.textBaseline = 'center';
@@ -163,8 +161,6 @@ WelcomeState.prototype = {
           ctx.fillText('Space Invaders', game.width / 2, game.height / 2 - 40);
           ctx.font = '20px Sans-serif';
           ctx.fillText("Press 'Space Bar' to start.", game.width / 2, game.height / 1 - 14);
-
-    
 
         // console.log(ctx);
     },
