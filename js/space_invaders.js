@@ -470,7 +470,7 @@ window.addEventListener('keydown', function keydown(e) {
 
     if(keycode == 37 || keycode == 39 || keycode == 32) {
         e.preventDefault();
-        // console.log('yay keydown');
+        console.log('yay keydown');
     }
     game.keyDown(keycode);
 });
@@ -478,5 +478,5 @@ window.addEventListener('keyup', function keydown(e) {
     var keycode = e.which || window.event.keyCode;
 
     game.keyUp(keycode);
-    // console.log('yay keyup');
+    console.log('yay keyup');
 });
